@@ -1,0 +1,3 @@
+## 2024-05-24 - Interactive Grid Accessibility
+**Learning:** Icon-only overlay cards (like those in FeatureGrid) often lack keyboard accessibility and screen reader support when implemented with divs instead of buttons. Making them `<button>` elements with `aria-label` provides a significant UX improvement for keyboard and assistive tech users.
+**Action:** Always check interactive grid elements meant for navigation/modals to ensure they use semantic `<button>` or `<a>` tags with appropriate `aria-label` attributes for icon-only interactions. Added `focus-visible` styling to provide clear keyboard focus indicators.
