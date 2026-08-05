@@ -45,9 +45,9 @@ export default function FeatureGrid({ onOpenModal }) {
       style={{ animationDelay: '0.2s' }}
     >
       {cards.map((card) => (
-        <div
+        <button
           key={card.id}
-          className={`feature-card relative overflow-hidden rounded-3xl glass-card cursor-pointer group aspect-[4/3] md:aspect-auto ${card.span || ''}`}
+          className={`feature-card block w-full text-left relative overflow-hidden rounded-3xl glass-card cursor-pointer group aspect-[4/3] md:aspect-auto focus-visible:ring-4 focus-visible:ring-white/50 focus:outline-none ${card.span || ''}`}
           onClick={() => onOpenModal(card.id)}
         >
           <img
@@ -66,7 +66,7 @@ export default function FeatureGrid({ onOpenModal }) {
               </div>
             </div>
           </div>
-        </div>
+        </button>
       ))}
     </section>
   );
