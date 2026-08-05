@@ -53,7 +53,7 @@ export default function TodoModal({ onClose }) {
       const newDetails = prompt('Update details (optional):', todo.details || '');
       setTodos(
         todos.map((t) =>
-          t.id === id ? { ...t, text: newText.trim(), details: newDetails !== null ? newDetails.trim() : t.details } : t
+          t.id === id ? { ...t, text: newText.trim().substring(0, 100), details: newDetails !== null ? newDetails.trim().substring(0, 500) : t.details } : t
         )
       );
     }
@@ -103,6 +103,7 @@ export default function TodoModal({ onClose }) {
                   value={taskText}
                   onChange={(e) => setTaskText(e.target.value)}
                   placeholder="What needs to be done?"
+                  maxLength={100}
                   required
                   className="w-full bg-[#151b27] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all"
                 />
@@ -110,6 +111,7 @@ export default function TodoModal({ onClose }) {
                   value={taskDetails}
                   onChange={(e) => setTaskDetails(e.target.value)}
                   placeholder="Enter Details (optional)"
+                  maxLength={500}
                   rows="3"
                   className="w-full bg-[#151b27] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all resize-none"
                 />
