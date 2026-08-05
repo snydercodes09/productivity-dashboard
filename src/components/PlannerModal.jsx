@@ -71,6 +71,7 @@ export default function PlannerModal({ onClose }) {
                       type="text"
                       className="w-full h-full bg-transparent border-none px-4 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:bg-white/5 rounded-r-lg"
                       placeholder="Plan this hour..."
+                      maxLength={200}
                       value={plannerData[hour] || ''}
                       onChange={(e) => handleInput(hour, e.target.value)}
                     />
