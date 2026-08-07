@@ -21,7 +21,8 @@ export default function useWeather() {
 
       const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,is_day`;
 
-      fetch(weatherUrl)
+      // 🛡️ Sentinel: Added timeout to prevent hanging requests
+      fetch(weatherUrl, { signal: AbortSignal.timeout(5000) })
         .then((res) => res.json())
         .then((data) => {
           if (!data.current) return;
@@ -72,7 +73,8 @@ export default function useWeather() {
         .catch((err) => console.error('Weather error:', err));
 
       const geoUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-      fetch(geoUrl)
+      // 🛡️ Sentinel: Added timeout to prevent hanging requests
+      fetch(geoUrl, { signal: AbortSignal.timeout(5000) })
         .then((res) => res.json())
         .then((data) => {
           const city = data.city || data.locality || data.principalSubdivision || 'Unknown Location';
