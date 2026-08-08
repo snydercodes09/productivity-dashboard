@@ -26,7 +26,8 @@ export default function MotivationModal({ onClose }) {
   const fetchQuote = useCallback(() => {
     setQuote({ text: '"Loading inspiration..."', author: '- -' });
 
-    fetch('https://dummyjson.com/quotes/random')
+    // 🛡️ Sentinel: Added timeout to prevent hanging requests
+    fetch('https://dummyjson.com/quotes/random', { signal: AbortSignal.timeout(5000) })
       .then((res) => res.json())
       .then((data) => {
         setQuote({ text: `"${data.quote}"`, author: `- ${data.author}` });
