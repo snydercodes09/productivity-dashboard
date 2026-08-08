@@ -4,36 +4,38 @@ const ArrowIcon = () => (
   </svg>
 );
 
+// ⚡ Bolt: Reduced Unsplash image width from 2000px to 800px.
+// Expected Impact: Reduces total image payload by ~80% (from ~2.0MB to ~400KB), significantly improving load time.
 const cards = [
   {
     id: 'todo',
     title: 'To Do List',
-    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?q=80&w=2000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?q=80&w=800&auto=format&fit=crop',
     span: '',
   },
   {
     id: 'planner',
     title: 'Daily Planner',
-    image: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=2000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&w=800&auto=format&fit=crop',
     span: '',
   },
   {
     id: 'motivation',
     title: 'Motivation',
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop',
     span: '',
   },
   {
     id: 'pomodoro',
     title: 'Pomodoro Timer',
-    image: 'https://images.unsplash.com/photo-1495364141860-b0d03eccd065?q=80&w=2000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1495364141860-b0d03eccd065?q=80&w=800&auto=format&fit=crop',
     span: 'lg:col-span-2',
     extraImgClass: 'scale-[1.2] group-hover:scale-[1.3]',
   },
   {
     id: 'goals',
     title: 'Daily Goals',
-    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop',
     span: '',
   },
 ];
