@@ -1,15 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 
 export default function useWeather() {
-  const [weather, setWeather] = useState({
-    temp: '--',
-    condition: 'sunny',
-    conditionLabel: 'Loading...',
-    humidity: '--%',
-    wind: '-- km/h',
-    precip: '-- mm',
-    city: 'Loading...',
-    isDay: 1,
+  const [weather, setWeather] = useState(() => {
+    try {
+      const cached = localStorage.getItem('dashboard-weather');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return parsed.data;
+      }
+    } catch {
+      // ignore
+    }
+    return {
+      temp: '--',
+      condition: 'sunny',
+      conditionLabel: 'Loading...',
+      humidity: '--%',
+      wind: '-- km/h',
+      precip: '-- mm',
+      city: 'Loading...',
+      isDay: 1,
+    };
   });
 
   const loaded = useRef(false);
@@ -17,6 +28,23 @@ export default function useWeather() {
   useEffect(() => {
     function getWeatherByCoords(lat, lon) {
       if (loaded.current) return;
+
+      // ⚡ Bolt: Check if we have valid, fresh cached data before fetching
+      // Expected Impact: Eliminates API request on page reloads if data is fresh,
+      // avoiding layout shift and network latency.
+      try {
+        const cached = localStorage.getItem('dashboard-weather');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.timestamp < 30 * 60 * 1000) {
+            loaded.current = true;
+            return; // Skip fetch, use initialized state
+          }
+        }
+      } catch {
+        // ignore
+      }
+
       loaded.current = true;
 
       const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,is_day`;
@@ -58,15 +86,24 @@ export default function useWeather() {
           let label = conditionMap[condition] || 'Unknown';
           if (condition === 'sunny' && isDay === 0) label = 'Clear';
 
-          setWeather({
-            temp,
-            condition,
-            conditionLabel: label,
-            humidity: `${humidity}%`,
-            wind: `${wind} km/h`,
-            precip: `${precip} mm`,
-            city: 'Loading...',
-            isDay,
+          setWeather((prev) => {
+            const newData = {
+              temp,
+              condition,
+              conditionLabel: label,
+              humidity: `${humidity}%`,
+              wind: `${wind} km/h`,
+              precip: `${precip} mm`,
+              city: prev.city !== 'Loading...' && prev.city !== 'Unavailable' ? prev.city : 'Loading...',
+              isDay,
+            };
+            // ⚡ Bolt: Cache newly fetched data
+            try {
+              localStorage.setItem('dashboard-weather', JSON.stringify({ timestamp: Date.now(), data: newData }));
+            } catch {
+              // ignore
+            }
+            return newData;
           });
         })
         .catch((err) => console.error('Weather error:', err));
@@ -76,10 +113,27 @@ export default function useWeather() {
         .then((res) => res.json())
         .then((data) => {
           const city = data.city || data.locality || data.principalSubdivision || 'Unknown Location';
-          setWeather((prev) => ({ ...prev, city }));
+          setWeather((prev) => {
+            const finalData = { ...prev, city };
+            // ⚡ Bolt: Update cache with city name
+            try {
+              localStorage.setItem('dashboard-weather', JSON.stringify({ timestamp: Date.now(), data: finalData }));
+            } catch {
+              // ignore
+            }
+            return finalData;
+          });
         })
         .catch(() => {
-          setWeather((prev) => ({ ...prev, city: 'Unavailable' }));
+          setWeather((prev) => {
+             const finalData = { ...prev, city: 'Unavailable' };
+             try {
+                localStorage.setItem('dashboard-weather', JSON.stringify({ timestamp: Date.now(), data: finalData }));
+             } catch {
+                // ignore
+             }
+             return finalData;
+          });
         });
     }
 
