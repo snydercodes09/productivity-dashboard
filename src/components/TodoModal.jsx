@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const CloseIcon = () => (
@@ -63,10 +63,13 @@ export default function TodoModal({ onClose }) {
     setTodos(todos.filter((t) => !t.completed));
   };
 
-  const filtered =
+  // ⚡ Bolt: Memoize filtered todos to prevent redundant O(N) filtering on every keystroke
+  // Expected Impact: Eliminates input lag when typing new tasks by avoiding unnecessary array recalculations.
+  const filtered = useMemo(() => (
     filter === 'active' ? todos.filter((t) => !t.completed) :
     filter === 'completed' ? todos.filter((t) => t.completed) :
-    todos;
+    todos
+  ), [todos, filter]);
 
   const filters = [
     { key: 'all', label: 'All' },
