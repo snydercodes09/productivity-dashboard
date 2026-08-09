@@ -32,7 +32,13 @@ export default function TodoModal({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!taskText.trim()) return;
-    setTodos([{ id: Date.now(), text: taskText.trim(), details: taskDetails.trim(), completed: false }, ...todos]);
+    // 🛡️ Sentinel: Enforce input limits to prevent storage exhaustion (DoS)
+    setTodos([{
+      id: Date.now(),
+      text: taskText.trim().substring(0, 100),
+      details: taskDetails.trim().substring(0, 500),
+      completed: false
+    }, ...todos]);
     setTaskText('');
     setTaskDetails('');
   };
