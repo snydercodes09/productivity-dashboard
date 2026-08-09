@@ -29,22 +29,6 @@ export default function useWeather() {
     function getWeatherByCoords(lat, lon) {
       if (loaded.current) return;
 
-      // ⚡ Bolt: Check if we have valid, fresh cached data before fetching
-      // Expected Impact: Eliminates API request on page reloads if data is fresh,
-      // avoiding layout shift and network latency.
-      try {
-        const cached = localStorage.getItem('dashboard-weather');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.timestamp < 30 * 60 * 1000) {
-            loaded.current = true;
-            return; // Skip fetch, use initialized state
-          }
-        }
-      } catch {
-        // ignore
-      }
-
       loaded.current = true;
 
       const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,is_day`;
@@ -140,6 +124,21 @@ export default function useWeather() {
     }
 
     function fetchWeather() {
+      // ⚡ Bolt: Check cache before Geolocation to avoid expensive hardware wake-up
+      // Expected Impact: Saves battery and eliminates geolocation latency (up to 10s) on page reloads if data is fresh.
+      try {
+        const cached = localStorage.getItem('dashboard-weather');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.timestamp < 30 * 60 * 1000) {
+            loaded.current = true;
+            return; // Skip geolocation entirely if cache is fresh
+          }
+        }
+      } catch {
+        // ignore
+      }
+
       if (!navigator.geolocation || window.location.protocol === 'file:') {
         getWeatherByCoords(26.1445, 91.7362);
         return;
