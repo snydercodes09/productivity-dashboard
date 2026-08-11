@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import useClock from '../hooks/useClock';
 import useWeather from '../hooks/useWeather';
@@ -43,11 +44,14 @@ export default function Navbar() {
 
   const bgUrl = bgImages[weather.condition]?.[timeGroup] || bgImages.sunny[timeGroup];
 
-  // Apply dynamic background to body
-  document.body.style.backgroundImage = `url('${bgUrl}')`;
-  document.body.style.backgroundSize = 'cover';
-  document.body.style.backgroundPosition = 'center';
-  document.body.style.backgroundAttachment = 'fixed';
+  // ⚡ Bolt: Moved body background updates into a useEffect to prevent redundant synchronous DOM mutations.
+  // Expected Impact: Eliminates forced layout/style recalculations every 1 second (triggered by useClock), reducing main thread work and preventing UI jank.
+  useEffect(() => {
+    document.body.style.backgroundImage = `url('${bgUrl}')`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
+  }, [bgUrl]);
 
   return (
     <header

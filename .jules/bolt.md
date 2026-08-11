@@ -9,3 +9,7 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+
+## 2024-05-18 - [Render-Phase DOM Mutations with High-Frequency Hooks]
+**Learning:** The `Navbar` component uses `useClock`, causing it to re-render every second. Combining this high-frequency re-render with direct, synchronous DOM mutations (e.g., `document.body.style = ...`) directly in the render phase forces the browser to recalculate layouts/styles every second, leading to UI jank and unnecessary main thread work.
+**Action:** Always wrap side effects like direct DOM mutations in `useEffect` with appropriate dependencies (like `bgUrl`) so they only execute when the actual value changes, not on every unrelated render cycle.
