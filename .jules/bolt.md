@@ -9,3 +9,7 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+
+## 2026-08-12 - [Memoizing Child Components in Mapped Lists]
+**Learning:** When rendering a large mapped list (like 24 time slots) where each item has an input field triggering parent state updates on every keystroke, the entire list will re-render unnecessarily without memoization. This causes significant performance overhead and input lag.
+**Action:** Extract list items into separate components wrapped with `React.memo()` and use `useCallback` for event handlers passed down from the parent. This ensures only the specific item being modified re-renders, not the whole list.
