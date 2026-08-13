@@ -9,3 +9,6 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+## 2023-10-27 - Input Lag in Mapped Lists
+**Learning:** Typing in an input inside a mapped list without a memoized row component causes the entire list to re-render on every keystroke, causing severe input lag.
+**Action:** Extract mapped inputs into a separate `memo`ized component and use stable callbacks (`useCallback` with functional state updates) for event handlers to prevent sibling re-renders.
