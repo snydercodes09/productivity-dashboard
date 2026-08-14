@@ -29,7 +29,7 @@ export default function GoalsModal({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!goalText.trim()) return;
-    setGoals([...goals, { id: Date.now(), text: goalText.trim(), completed: false }]);
+    setGoals([...goals, { id: Date.now(), text: goalText.trim().substring(0, 100), completed: false }]);
     setGoalText('');
   };
 
