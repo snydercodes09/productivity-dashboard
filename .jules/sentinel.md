@@ -7,3 +7,8 @@
 **Vulnerability:** Duplicate conflicting CSPs in index.html where one allowed unsafe-eval, risking code injection (e.g., via prototype pollution or malicious scripts executing strings as code).
 **Learning:** Vite dev tools might require unsafe-inline for styles/scripts in some configurations, but unsafe-eval is generally not required for standard React builds and opens up severe injection vectors. Multiple CSPs result in the most restrictive intersection, but it's confusing and error-prone.
 **Prevention:** Regularly audit CSP tags to ensure no unsafe directives are left over from debugging or copy-pasting, and ensure only one consolidated CSP exists to avoid unexpected behavior.
+
+## 2026-08-15 - Prevent client-side DoS via local storage exhaustion
+**Vulnerability:** Input fields only relied on HTML `maxLength` attributes, allowing potential local storage exhaustion if limits are bypassed via developer tools or malicious scripts.
+**Learning:** HTML validation attributes like `maxLength` are easily bypassed on the client side. Persisting unbounded input to `localStorage` can lead to QuotaExceeded errors, breaking the application for the user.
+**Prevention:** Always enforce input length limits and validation at the JavaScript/state level before writing to persistent storage, rather than relying solely on HTML attributes.
