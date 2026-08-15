@@ -9,3 +9,7 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+
+## 2023-10-27 - [Anti-pattern: Unmemoized List Inputs Mapping to Parent State]
+**Learning:** Found a specific anti-pattern in the React productivity dashboard architecture: when generating numerous form inputs (like the 24 time slots in `PlannerModal`), mapping their `onChange` directly to a single shared parent state causes *all* inputs to re-render on every single keystroke. This causes severe input lag without memoization.
+**Action:** Always extract such looped inputs into separate, `React.memo`ized components and pass down a `useCallback` referenced `onChange` handler so that only the actively modified input re-renders.
