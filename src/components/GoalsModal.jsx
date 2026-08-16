@@ -29,7 +29,9 @@ export default function GoalsModal({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!goalText.trim()) return;
-    setGoals([...goals, { id: Date.now(), text: goalText.trim(), completed: false }]);
+    // 🛡️ Sentinel: Enforce length limits at JS level to prevent localStorage exhaustion DoS
+    const sanitizedText = goalText.trim().substring(0, 100);
+    setGoals([...goals, { id: Date.now(), text: sanitizedText, completed: false }]);
     setGoalText('');
   };
 
