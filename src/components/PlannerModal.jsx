@@ -23,7 +23,9 @@ export default function PlannerModal({ onClose }) {
   const [plannerData, setPlannerData] = useLocalStorage('dashboard-planner', {});
 
   const handleInput = (hour, value) => {
-    setPlannerData({ ...plannerData, [hour]: value });
+    // 🛡️ Sentinel: Enforce length limits at JS level to prevent localStorage exhaustion DoS
+    const sanitizedValue = value.substring(0, 200);
+    setPlannerData({ ...plannerData, [hour]: sanitizedValue });
   };
 
   const clearAll = () => {
