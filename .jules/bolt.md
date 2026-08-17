@@ -9,3 +9,7 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+
+## 2024-08-17 - [Clock Updates Optimization]
+**Learning:** Clocks displaying only HH:MM update redundantly if using a 1-second interval (`setInterval(..., 1000)`). This forces 59 unnecessary rerenders/calculations per minute, which wastes CPU cycles.
+**Action:** Use a dynamically calculated `setTimeout` that fires exactly at the start of the next minute by determining the remaining milliseconds: `60000 - (now.getSeconds() * 1000 + now.getMilliseconds())`.

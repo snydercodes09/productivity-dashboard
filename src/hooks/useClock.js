@@ -22,6 +22,8 @@ export default function useClock() {
   );
 
   useEffect(() => {
+    let timeoutId;
+
     function update() {
       const now = new Date();
       const hours = now.getHours();
@@ -36,11 +38,16 @@ export default function useClock() {
       else if (hours >= 17 && hours < 19) group = 'goldenHour';
       else if (hours >= 19 && hours < 21) group = 'evening';
       setTimeGroup(group);
+
+      // ⚡ Bolt: Calculate exact milliseconds until the next minute
+      // Expected Impact: Reduces unnecessary timer executions by ~98% (from 60 per minute to 1)
+      // since the clock only displays hours and minutes.
+      const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+      timeoutId = setTimeout(update, msUntilNextMinute);
     }
 
     update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return { time, date, timeGroup };
