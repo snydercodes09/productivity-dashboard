@@ -22,6 +22,10 @@ export default function useClock() {
   );
 
   useEffect(() => {
+    let timeoutId;
+
+    // ⚡ Bolt: Sync clock updates with the system minute rollover instead of waking up every second.
+    // Expected Impact: Reduces unnecessary React state updates and CPU wake-ups from 60x/min to 1x/min (98% reduction).
     function update() {
       const now = new Date();
       const hours = now.getHours();
@@ -36,11 +40,14 @@ export default function useClock() {
       else if (hours >= 17 && hours < 19) group = 'goldenHour';
       else if (hours >= 19 && hours < 21) group = 'evening';
       setTimeGroup(group);
+
+      const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+      timeoutId = setTimeout(update, msUntilNextMinute);
     }
 
     update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return { time, date, timeGroup };
