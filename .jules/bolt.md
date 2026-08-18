@@ -9,3 +9,6 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+## 2025-02-20 - Syncing UI clocks efficiently
+**Learning:** React state updates driven by fixed intervals (like `setInterval(fn, 1000)`) for minute-precision UI clocks cause 59 unnecessary CPU wakeups and React render passes per minute. This is a common performance anti-pattern in long-running dashboard tabs that drains battery and steals main thread time.
+**Action:** Next time, always sync clock updates to the actual system rollover by calculating `60000 - (now.getSeconds() * 1000 + now.getMilliseconds())` and using a recursive `setTimeout`.
