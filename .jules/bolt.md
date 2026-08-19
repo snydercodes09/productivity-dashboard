@@ -9,3 +9,6 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+## 2024-08-19 - PlannerModal TimeSlots Re-render Penalty
+**Learning:** Found an anti-pattern in `PlannerModal.jsx` where 24 time slot inputs were rendered in a single loop, pulling state from a shared `plannerData` object. Because the inputs were not memoized, typing in *one* input caused a full re-render of all 24 inputs, leading to typing latency.
+**Action:** Always extract items rendered in a large loop (especially inputs) into their own `React.memo` wrapped components. Pair this with `useCallback` and functional state updates `(prev => ...)` in the parent to keep the change handler reference stable, ensuring only the modified item re-renders.
