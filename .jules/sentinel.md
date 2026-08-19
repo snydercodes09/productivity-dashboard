@@ -7,3 +7,8 @@
 **Vulnerability:** Duplicate conflicting CSPs in index.html where one allowed unsafe-eval, risking code injection (e.g., via prototype pollution or malicious scripts executing strings as code).
 **Learning:** Vite dev tools might require unsafe-inline for styles/scripts in some configurations, but unsafe-eval is generally not required for standard React builds and opens up severe injection vectors. Multiple CSPs result in the most restrictive intersection, but it's confusing and error-prone.
 **Prevention:** Regularly audit CSP tags to ensure no unsafe directives are left over from debugging or copy-pasting, and ensure only one consolidated CSP exists to avoid unexpected behavior.
+
+## 2026-08-19 - Enforce strict input validation before localStorage writing
+**Vulnerability:** Client-side DoS via localStorage exhaustion. The app relied solely on HTML `maxLength` attributes to limit input size. A malicious user or script could bypass the HTML restriction, injecting large strings directly into the component state and filling up the limited (~5MB) localStorage quota. This would break persistent state for the user across the app.
+**Learning:** HTML validation (like `maxLength`) is only a UX convenience, not a security boundary. Data written to persistent storage (even locally) must be strictly validated/truncated at the JavaScript level before serialization.
+**Prevention:** Always implement explicit `.substring(0, max_len)` or equivalent validation at the JS level (e.g., in `handleSubmit` or `handleInput`) before saving to state that syncs with `localStorage`.
