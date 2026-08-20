@@ -9,3 +9,6 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+## 2025-02-20 - Unnecessary Re-renders in Large Forms with LocalStorage
+**Learning:** Binding `onChange` of multiple child inputs directly to a parent component's state (which then writes to `localStorage` via a custom hook) causes the entire parent and *all* child inputs to re-render on every single keystroke. In `PlannerModal`, this caused 24 inputs to re-render for a single character typed, leading to noticeable UI lag.
+**Action:** Always extract items in a large list (especially inputs) into their own `React.memo` components, and pass them a stable callback (using `useCallback`) for updates. This ensures only the single input being typed into re-renders.

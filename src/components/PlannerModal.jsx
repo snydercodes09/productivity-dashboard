@@ -1,3 +1,4 @@
+import { useCallback, memo } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 const CloseIcon = () => (
@@ -19,16 +20,36 @@ function generateHours() {
 
 const timeSlots = generateHours();
 
+// ⚡ Bolt: Extracted TimeSlot into a memoized component.
+// Expected Impact: Prevents all 24 slots from re-rendering on every keystroke, reducing re-renders from 24 to 1 per keystroke and eliminating input lag.
+const TimeSlot = memo(({ hour, label, value, onChange }) => (
+  <div className="flex items-stretch border-b border-white/5 last:border-0 group hover:bg-white/5 transition-colors rounded-lg">
+    <div className="w-20 p-3 text-right text-xs font-semibold text-gray-400 border-r border-white/5 group-hover:text-purple-400 transition-colors flex-shrink-0">
+      {label}
+    </div>
+    <div className="flex-grow">
+      <input
+        type="text"
+        className="w-full h-full bg-transparent border-none px-4 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:bg-white/5 rounded-r-lg"
+        placeholder="Plan this hour..."
+        maxLength={200}
+        value={value || ''}
+        onChange={(e) => onChange(hour, e.target.value)}
+      />
+    </div>
+  </div>
+));
+
 export default function PlannerModal({ onClose }) {
   const [plannerData, setPlannerData] = useLocalStorage('dashboard-planner', {});
 
-  const handleInput = (hour, value) => {
-    setPlannerData({ ...plannerData, [hour]: value });
-  };
+  const handleInput = useCallback((hour, value) => {
+    setPlannerData(prev => ({ ...prev, [hour]: value }));
+  }, [setPlannerData]);
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setPlannerData({});
-  };
+  }, [setPlannerData]);
 
   return (
     <section className="modal-overlay fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 overflow-y-auto">
@@ -59,24 +80,13 @@ export default function PlannerModal({ onClose }) {
           <div className="bg-[#131924] rounded-2xl p-3 border border-white/5">
             <div className="space-y-1 custom-scrollbar overflow-y-auto max-h-[380px] pr-2">
               {timeSlots.map(({ hour, label }) => (
-                <div
+                <TimeSlot
                   key={hour}
-                  className="flex items-stretch border-b border-white/5 last:border-0 group hover:bg-white/5 transition-colors rounded-lg"
-                >
-                  <div className="w-20 p-3 text-right text-xs font-semibold text-gray-400 border-r border-white/5 group-hover:text-purple-400 transition-colors flex-shrink-0">
-                    {label}
-                  </div>
-                  <div className="flex-grow">
-                    <input
-                      type="text"
-                      className="w-full h-full bg-transparent border-none px-4 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:bg-white/5 rounded-r-lg"
-                      placeholder="Plan this hour..."
-                      maxLength={200}
-                      value={plannerData[hour] || ''}
-                      onChange={(e) => handleInput(hour, e.target.value)}
-                    />
-                  </div>
-                </div>
+                  hour={hour}
+                  label={label}
+                  value={plannerData[hour]}
+                  onChange={handleInput}
+                />
               ))}
             </div>
           </div>
