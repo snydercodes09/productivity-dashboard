@@ -104,7 +104,7 @@ export default function TodoModal({ onClose }) {
                 <input
                   type="text"
                   value={taskText}
-                  onChange={(e) => setTaskText(e.target.value)}
+                  onChange={(e) => setTaskText(e.target.value.substring(0, 100))}
                   placeholder="What needs to be done?"
                   maxLength={100}
                   required
@@ -112,7 +112,7 @@ export default function TodoModal({ onClose }) {
                 />
                 <textarea
                   value={taskDetails}
-                  onChange={(e) => setTaskDetails(e.target.value)}
+                  onChange={(e) => setTaskDetails(e.target.value.substring(0, 500))}
                   placeholder="Enter Details (optional)"
                   maxLength={500}
                   rows="3"

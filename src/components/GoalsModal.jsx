@@ -100,7 +100,7 @@ export default function GoalsModal({ onClose }) {
               <input
                 type="text"
                 value={goalText}
-                onChange={(e) => setGoalText(e.target.value)}
+                onChange={(e) => setGoalText(e.target.value.substring(0, 100))}
                 placeholder="Add a new goal..."
                 maxLength={100}
                 required
