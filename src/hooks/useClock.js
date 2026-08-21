@@ -38,9 +38,22 @@ export default function useClock() {
       setTimeGroup(group);
     }
 
+    let timeoutId;
+    function scheduleNextUpdate() {
+      const now = new Date();
+      // ⚡ Bolt: Calculate exact ms until the next minute.
+      // Expected Impact: Reduces Navbar re-renders from 60 per minute to just 1 per minute, saving CPU cycles.
+      const msUntilNextMinute = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+      timeoutId = setTimeout(() => {
+        update();
+        scheduleNextUpdate();
+      }, msUntilNextMinute);
+    }
+
     update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
+    scheduleNextUpdate();
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return { time, date, timeGroup };
