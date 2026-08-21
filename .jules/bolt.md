@@ -9,3 +9,7 @@
 ## 2024-05-17 - Bypassing Expensive Browser APIs (Geolocation) with Cache
 **Learning:** Browser APIs like `navigator.geolocation` can be extremely slow (up to 10 seconds timeout) and resource-intensive (waking up GPS hardware, showing permission prompts), which blocks or delays application initialization. Checking cache only right before a network fetch is insufficient if we still pay the cost of geolocation first.
 **Action:** Always place cache checks *before* expensive browser APIs like Geolocation or Bluetooth, not just before the network request. If fresh data exists, skip the hardware API entirely to save battery and avoid UI latency.
+
+## 2026-08-21 - [Time-Based Rendering Efficiency]
+**Learning:** Using \`setInterval(..., 1000)\` for a clock component causes unnecessary component re-renders (60 times a minute) when the UI only displays the current time down to the minute.
+**Action:** Use \`setTimeout\` to sync updates with the actual change boundary (e.g. calculating exact milliseconds until the next minute starts) rather than eagerly firing updates every second.
